@@ -36,9 +36,41 @@ def analyze_matches(data):
         injuries = data[data['injuries'].notna()]
         print("\nMatches with reported injuries:")
         print(injuries[['date', 'team', 'opponent', 'injuries']])
+        # Step 3: Feature Engineering
+def team_performance(team_data):
+    return pd.Series({
+        'AvgGoalsScored': team_data['gf'].mean(),
+        'AvgGoalsConceded': team_data['ga'].mean(),
+        'AvgPossession': team_data['poss'].mean(),
+        'AvgShots': team_data['sh'].mean(),
+        'AvgShotsOnTarget': team_data['sot'].mean(),
+        'TotalPenalties': team_data['pk'].sum()
+    })
+
+team_stats = df.groupby('team').apply(team_performance).reset_index()
+team_stats.set_index('team', inplace=True)
+
+print("\nTeam Performance Stats:")
+print(team_stats.head())
     else:
         print("\nNo specific injury information found in the dataset.")
 
 analyze_matches(df)
+# Step 3: Feature Engineering
+def team_performance(team_data):
+    return pd.Series({
+        'AvgGoalsScored': team_data['gf'].mean(),
+        'AvgGoalsConceded': team_data['ga'].mean(),
+        'AvgPossession': team_data['poss'].mean(),
+        'AvgShots': team_data['sh'].mean(),
+        'AvgShotsOnTarget': team_data['sot'].mean(),
+        'TotalPenalties': team_data['pk'].sum()
+    })
+
+team_stats = df.groupby('team').apply(team_performance).reset_index()
+team_stats.set_index('team', inplace=True)
+
+print("\nTeam Performance Stats:")
+print(team_stats.head())
 
 
