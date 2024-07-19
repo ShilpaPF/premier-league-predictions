@@ -1,5 +1,4 @@
 # premier-league-predictions
-Project report for Premier League Football Predictions
 import pandas as pd
 import numpy as np
 from sklearn.cluster import DBSCAN, KMeans
@@ -72,5 +71,11 @@ team_stats.set_index('team', inplace=True)
 
 print("\nTeam Performance Stats:")
 print(team_stats.head())
+# Step 4: Clustering
+scaler = StandardScaler()
+scaled_stats = scaler.fit_transform(team_stats.drop('TotalPenalties', axis=1))
 
+# DBSCAN Clustering
+dbscan = DBSCAN(eps=0.5, min_samples=2)
+team_stats['DBSCAN_Cluster'] = dbscan.fit_predict(scaled_stats)
 
