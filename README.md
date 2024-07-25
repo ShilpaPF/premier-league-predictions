@@ -70,3 +70,50 @@ def perform_eda(data):
     plt.tight_layout()
     plt.savefig(os.path.join(charts_dir, 'shots_on_target_distribution.png'))
     plt.show()
+    # Home vs Away Performance (Bar Chart)
+    home_performance = data[data['venue'] == 'Home'].groupby('team')['gf'].mean().sort_values(ascending=False)
+    away_performance = data[data['venue'] == 'Away'].groupby('team')['gf'].mean()
+    
+    plt.figure(figsize=(12, 8))
+    x = range(len(home_performance))
+    width = 0.35
+    plt.bar(x, home_performance, width, label='Home')
+    plt.bar([i + width for i in x], away_performance, width, label='Away')
+    plt.xlabel('Teams')
+    plt.ylabel('Average Goals')
+    plt.title('Average Goals Scored: Home vs Away')
+    plt.xticks([i + width/2 for i in x], home_performance.index, rotation=45, ha='right')
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(charts_dir, 'home_vs_away_performance.png'))
+    plt.show()
+
+    # Penalties by Team (Bar Chart)
+    penalties = data.groupby('team')['pk'].sum().sort_values(ascending=False)
+    plt.figure(figsize=(12, 6))
+    sns.barplot(x=penalties.index, y=penalties.values)
+    plt.title('Total Penalties by Team')
+    plt.xticks(rotation=45, ha='right')
+    plt.ylabel('Number of Penalties')
+    plt.tight_layout()
+    plt.savefig(os.path.join(charts_dir, 'penalties_by_team.png'))
+    plt.show()
+
+    # Pie charts for match results distribution by team
+    plt.figure(figsize=(20, 15))
+    team_results = data.groupby('team')['result'].value_counts(normalize=True).unstack()
+    team_results = team_results.sort_values('W', ascending=False)  # Sort by win percentage
+
+    for i, team in enumerate(team_results.index):
+        plt.subplot(4, 5, i+1)  # 4 rows, 5 columns of subplots
+        results = team_results.loc[team]
+        plt.pie(results, labels=['Win', 'Draw', 'Loss'], autopct='%1.1f%%', startangle=90,
+                colors=['#66b3ff', '#99ff99', '#ff9999'])
+        plt.title(team, fontsize=10)
+    
+    plt.suptitle('Match Results Distribution by Team', fontsize=16)
+    plt.tight_layout()
+    plt.savefig(os.path.join(charts_dir, 'match_results_by_team_pie_charts.png'))
+    plt.show()
+
+perform_eda(df)
